@@ -1,31 +1,469 @@
 ﻿<Page x:Class="ZenFlow.Views.VistaEnfoque"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="Enfoque">
-    <StackPanel Margin="30" HorizontalAlignment="Center">
-        <TextBlock Text="Modo Enfoque" FontSize="22" FontWeight="Bold"
-                   Foreground="#1F4E79" Margin="0,0,0,20"
-                   HorizontalAlignment="Center"/>
-        <TextBlock x:Name="TxtTimer" Text="25:00" FontSize="64"
-                   FontWeight="Bold" Foreground="#1F4E79"
-                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
-            <Button Content="Iniciar" x:Name="BtnIniciar"
-                    Height="38" Padding="20,0" Margin="0,0,10,0"
-                    Background="#185FA5" Foreground="White"
-                    BorderThickness="0" FontSize="13"
-                    Click="Iniciar_Click"/>
-            <Button Content="Pausar" Height="38" Padding="20,0"
-                    Margin="0,0,10,0" FontSize="13"
-                    Click="Pausar_Click"/>
-            <Button Content="Terminar" Height="38" Padding="20,0"
-                    FontSize="13" Foreground="#A32D2D"
-                    Click="Terminar_Click"/>
-        </StackPanel>
-        <TextBlock Text="Apps a bloquear (separadas por coma):"
-                   FontSize="12" Foreground="#555" Margin="0,0,0,6"/>
-        <TextBox x:Name="TxtApps" Text="chrome,steam,spotify"
-                 Height="34" Padding="8,6" FontSize="13"
-                 BorderBrush="#CCCCCC" BorderThickness="1" Width="300"/>
-    </StackPanel>
+      Title="Enfoque" Background="#F5F7FA">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="32">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="280"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- COLUMNA IZQUIERDA: TIMER -->
+            <StackPanel Grid.Column="0" Margin="0,0,24,0">
+                <TextBlock Text="Modo Enfoque" FontSize="24" FontWeight="Bold"
+                           Foreground="#1F4E79" Margin="0,0,0,6"/>
+                <TextBlock Text="Configura tu sesión y bloquea lo que te distrae"
+                           FontSize="12" Foreground="#888" Margin="0,0,0,24"/>
+
+                <!-- CARD TIMER -->
+                <Border Background="White" CornerRadius="12" Padding="32">
+                    <StackPanel HorizontalAlignment="Center">
+
+                        <!-- Display del timer -->
+                        <Border Width="200" Height="200" CornerRadius="100"
+                                BorderBrush="#E6F1FB" BorderThickness="8"
+                                Margin="0,0,0,24">
+                            <StackPanel VerticalAlignment="Center"
+                                        HorizontalAlignment="Center">
+                                <TextBlock x:Name="TxtTimer" Text="25:00"
+                                           FontSize="48" FontWeight="Bold"
+                                           Foreground="#1F4E79"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="TxtEstado" Text="Listo"
+                                           FontSize="13" Foreground="#888"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Configurar duración -->
+                        <TextBlock Text="Duración (minutos)"
+                                   FontSize="12" Foreground="#555"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,8">
+                            <Button Content="−" Width="36" Height="36"
+                                    FontSize="18" Cursor="Hand"
+                                    BorderThickness="1" BorderBrush="#DDDDDD"
+                                    Background="White" Click="Menos_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="6">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F0F0F0"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <TextBox x:Name="TxtMinutos" Text="25"
+                                     Width="70" Height="36"
+                                     FontSize="18" FontWeight="Bold"
+                                     Foreground="#1F4E79"
+                                     TextAlignment="Center"
+                                     BorderBrush="#DDDDDD"
+                                     Margin="8,0" VerticalContentAlignment="Center"/>
+                            <Button Content="+" Width="36" Height="36"
+                                    FontSize="18" Cursor="Hand"
+                                    BorderThickness="1" BorderBrush="#DDDDDD"
+                                    Background="White" Click="Mas_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="6">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F0F0F0"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Presets rápidos -->
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,24">
+                            <Button Content="5 min" Tag="5" Click="Preset_Click"
+                                    Margin="4,0" Padding="10,5" FontSize="11"
+                                    Cursor="Hand" BorderThickness="1"
+                                    BorderBrush="#DDDDDD" Background="#F5F5F5">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="20">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"
+                                                                          Margin="{TemplateBinding Padding}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#E6F1FB"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="15 min" Tag="15" Click="Preset_Click"
+                                    Margin="4,0" Padding="10,5" FontSize="11"
+                                    Cursor="Hand" BorderThickness="1"
+                                    BorderBrush="#DDDDDD" Background="#F5F5F5">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="20">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"
+                                                                          Margin="{TemplateBinding Padding}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#E6F1FB"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="25 min" Tag="25" Click="Preset_Click"
+                                    Margin="4,0" Padding="10,5" FontSize="11"
+                                    Cursor="Hand" BorderThickness="1"
+                                    BorderBrush="#DDDDDD" Background="#F5F5F5">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="20">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"
+                                                                          Margin="{TemplateBinding Padding}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#E6F1FB"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="50 min" Tag="50" Click="Preset_Click"
+                                    Margin="4,0" Padding="10,5" FontSize="11"
+                                    Cursor="Hand" BorderThickness="1"
+                                    BorderBrush="#DDDDDD" Background="#F5F5F5">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="20">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"
+                                                                          Margin="{TemplateBinding Padding}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#E6F1FB"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Botones control -->
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center">
+                            <Button x:Name="BtnIniciar" Content="▶  Iniciar"
+                                    Height="40" Padding="24,0" Margin="0,0,10,0"
+                                    FontSize="13" Cursor="Hand"
+                                    BorderThickness="0" Click="Iniciar_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="#1F4E79"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            CornerRadius="8"
+                                                            Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#185FA5"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="⏸  Pausar" Height="40" Padding="16,0"
+                                    Margin="0,0,10,0" FontSize="13" Cursor="Hand"
+                                    BorderThickness="1" BorderBrush="#DDDDDD"
+                                    Background="White" Click="Pausar_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="8"
+                                                            Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F0F0F0"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="⏹  Terminar" Height="40" Padding="16,0"
+                                    FontSize="13" Cursor="Hand"
+                                    BorderThickness="1" BorderBrush="#FCEBEB"
+                                    Background="#FCEBEB" Foreground="#A32D2D"
+                                    Click="Terminar_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="8"
+                                                            Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                                          VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F5C6C6"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- COLUMNA DERECHA: APPS A BLOQUEAR -->
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Apps a bloquear" FontSize="16"
+                           FontWeight="Bold" Foreground="#1F4E79"
+                           Margin="0,0,0,6"/>
+                <TextBlock Text="Selecciona las que quieres bloquear durante la sesión"
+                           FontSize="11" Foreground="#888" Margin="0,0,0,16"
+                           TextWrapping="Wrap"/>
+
+                <!-- Lista de apps con checkboxes -->
+                <Border Background="White" CornerRadius="10" Padding="16">
+                    <StackPanel>
+                        <CheckBox x:Name="ChkChrome" Margin="0,0,0,12" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🌐" FontSize="16" Margin="0,0,8,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Google Chrome" FontSize="13"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="chrome" FontSize="11"
+                                               Foreground="#888"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox x:Name="ChkSteam" Margin="0,0,0,12" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🎮" FontSize="16" Margin="0,0,8,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Steam" FontSize="13"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="steam" FontSize="11"
+                                               Foreground="#888"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox x:Name="ChkSpotify" Margin="0,0,0,12" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🎵" FontSize="16" Margin="0,0,8,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Spotify" FontSize="13"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="spotify" FontSize="11"
+                                               Foreground="#888"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox x:Name="ChkDiscord" Margin="0,0,0,12" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="💬" FontSize="16" Margin="0,0,8,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="Discord" FontSize="13"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="discord" FontSize="11"
+                                               Foreground="#888"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox x:Name="ChkYoutube" Margin="0,0,0,12" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="▶️" FontSize="16" Margin="0,0,8,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="YouTube (Edge/Chrome)"
+                                               FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock Text="msedge" FontSize="11"
+                                               Foreground="#888"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox x:Name="ChkWhatsapp" Margin="0,0,0,12" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📱" FontSize="16" Margin="0,0,8,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="WhatsApp" FontSize="13"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="whatsapp" FontSize="11"
+                                               Foreground="#888"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+
+                        <!-- App personalizada -->
+                        <Border BorderBrush="#EEEEEE" BorderThickness="0,1,0,0"
+                                Padding="0,12,0,0" Margin="0,4,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Agregar otra app"
+                                           FontSize="12" FontWeight="SemiBold"
+                                           Foreground="#555" Margin="0,0,0,8"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="TxtAppCustom"
+                                             Grid.Column="0" Height="32"
+                                             Padding="8,6" FontSize="12"
+                                             BorderBrush="#DDDDDD"
+                                             Margin="0,0,8,0"/>
+                                    <Button Grid.Column="1" Content="+"
+                                            Width="32" Height="32"
+                                            FontSize="16" Cursor="Hand"
+                                            BorderThickness="0"
+                                            Click="AgregarAppCustom_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Background" Value="#1F4E79"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}"
+                                                                    CornerRadius="6">
+                                                                <ContentPresenter HorizontalAlignment="Center"
+                                                                                  VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </Grid>
+                                <!-- Lista de apps custom agregadas -->
+                                <ItemsControl x:Name="ListaAppsCustom" Margin="0,8,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#F5F5F5" CornerRadius="4"
+                                                    Padding="8,4" Margin="0,0,0,4">
+                                                <Grid>
+                                                    <TextBlock Text="{Binding}"
+                                                               FontSize="12" Foreground="#333"
+                                                               VerticalAlignment="Center"/>
+                                                    <Button Content="✕" HorizontalAlignment="Right"
+                                                            Background="Transparent"
+                                                            BorderThickness="0" FontSize="11"
+                                                            Foreground="#999" Cursor="Hand"
+                                                            Tag="{Binding}"
+                                                            Click="QuitarAppCustom_Click"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </Page>
