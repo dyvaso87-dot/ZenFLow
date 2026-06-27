@@ -378,7 +378,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="▶️" FontSize="16" Margin="0,0,8,0"/>
                                 <StackPanel>
-                                    <TextBlock Text="YouTube (Edge/Chrome)"
+                                    <TextBlock Text=" Edge"
                                                FontSize="13" FontWeight="SemiBold"/>
                                     <TextBlock Text="msedge" FontSize="11"
                                                Foreground="#888"/>

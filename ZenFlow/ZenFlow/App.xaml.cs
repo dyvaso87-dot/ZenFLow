@@ -14,11 +14,11 @@ namespace ZenFlow
         {
             base.OnStartup(e);
 
-            GestorTareas = new GestorTareas(new TareaRepoJson());
-            GestorHabitos = new GestorHabitos(new HabitoRepoJson());
+            // Singleton aplicado — no usamos new, usamos .Instancia
+            GestorTareas = new GestorTareas(TareaRepoJson.Instancia);
+            GestorHabitos = new GestorHabitos(HabitoRepoJson.Instancia);
             MotorEnfoque = new MotorEnfoque();
 
-            // Abrir la ventana principal manualmente
             new MainWindow().Show();
         }
     }

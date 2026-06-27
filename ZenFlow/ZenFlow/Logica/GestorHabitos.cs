@@ -3,7 +3,7 @@ using ZenFlow.Repositorios;
 
 namespace ZenFlow.Logica
 {
-    public class GestorHabitos
+    public class GestorHabitos : IGestorHabitos  // ← agrega esto
     {
         private readonly IHabitoRepo _repo;
 
@@ -32,19 +32,14 @@ namespace ZenFlow.Logica
             if (habito == null) return;
 
             var hoy = DateTime.Today;
-
-            // Si ya lo cumplió hoy, no hace nada
             if (habito.UltimoCumplimiento.Date == hoy) return;
 
-            // Calcula la racha
             if (habito.UltimoCumplimiento.Date == hoy.AddDays(-1))
                 habito.RachaDias++;
             else
                 habito.RachaDias = 1;
 
             habito.UltimoCumplimiento = hoy;
-
-            // Solo actualiza, no elimina ni vuelve a crear
             _repo.Guardar(habito);
         }
 

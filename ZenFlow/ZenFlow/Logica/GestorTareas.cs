@@ -3,7 +3,7 @@ using ZenFlow.Repositorios;
 
 namespace ZenFlow.Logica
 {
-    public class GestorTareas
+    public class GestorTareas : IGestorTareas  // ← agrega esto
     {
         private readonly ITareaRepo _repo;
 
@@ -43,6 +43,7 @@ namespace ZenFlow.Logica
                 _repo.Guardar(tarea);
             }
         }
+
         public void EliminarTarea(int id)
         {
             _repo.Eliminar(id);
