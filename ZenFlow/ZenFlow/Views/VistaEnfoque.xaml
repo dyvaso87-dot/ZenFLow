@@ -1,0 +1,31 @@
+﻿<Page x:Class="ZenFlow.Views.VistaEnfoque"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Enfoque">
+    <StackPanel Margin="30" HorizontalAlignment="Center">
+        <TextBlock Text="Modo Enfoque" FontSize="22" FontWeight="Bold"
+                   Foreground="#1F4E79" Margin="0,0,0,20"
+                   HorizontalAlignment="Center"/>
+        <TextBlock x:Name="TxtTimer" Text="25:00" FontSize="64"
+                   FontWeight="Bold" Foreground="#1F4E79"
+                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <Button Content="Iniciar" x:Name="BtnIniciar"
+                    Height="38" Padding="20,0" Margin="0,0,10,0"
+                    Background="#185FA5" Foreground="White"
+                    BorderThickness="0" FontSize="13"
+                    Click="Iniciar_Click"/>
+            <Button Content="Pausar" Height="38" Padding="20,0"
+                    Margin="0,0,10,0" FontSize="13"
+                    Click="Pausar_Click"/>
+            <Button Content="Terminar" Height="38" Padding="20,0"
+                    FontSize="13" Foreground="#A32D2D"
+                    Click="Terminar_Click"/>
+        </StackPanel>
+        <TextBlock Text="Apps a bloquear (separadas por coma):"
+                   FontSize="12" Foreground="#555" Margin="0,0,0,6"/>
+        <TextBox x:Name="TxtApps" Text="chrome,steam,spotify"
+                 Height="34" Padding="8,6" FontSize="13"
+                 BorderBrush="#CCCCCC" BorderThickness="1" Width="300"/>
+    </StackPanel>
+</Page>
