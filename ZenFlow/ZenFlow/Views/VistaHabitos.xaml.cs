@@ -13,9 +13,8 @@ namespace ZenFlow.Views
 
         private void Cargar()
         {
-            ListaHabitos.ItemsSource = App.GestorHabitos
-                .ObtenerTodos()
-                .Select(h => $"{h.Nombre} — racha: {h.RachaDias} días");
+            ListaHabitos.ItemsSource = null;
+            ListaHabitos.ItemsSource = App.GestorHabitos.ObtenerTodos();
         }
 
         private void AgregarHabito_Click(object sender, RoutedEventArgs e)
@@ -26,13 +25,26 @@ namespace ZenFlow.Views
             Cargar();
         }
 
-        private void RegistrarCumplimiento(object sender, SelectionChangedEventArgs e)
+        private void Cumplir_Click(object sender, RoutedEventArgs e)
         {
-            var idx = ListaHabitos.SelectedIndex;
-            if (idx < 0) return;
-            var habito = App.GestorHabitos.ObtenerTodos()[idx];
-            App.GestorHabitos.RegistrarCumplimiento(habito.Id);
+            var id = (int)((Button)sender).Tag;
+            App.GestorHabitos.RegistrarCumplimiento(id);
             Cargar();
+        }
+
+        private void Eliminar_Click(object sender, RoutedEventArgs e)
+        {
+            var id = (int)((Button)sender).Tag;
+            var resultado = MessageBox.Show(
+                "¿Seguro que quieres eliminar este hábito?",
+                "Eliminar hábito",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            if (resultado == MessageBoxResult.Yes)
+            {
+                App.GestorHabitos.EliminarHabito(id);
+                Cargar();
+            }
         }
     }
 }

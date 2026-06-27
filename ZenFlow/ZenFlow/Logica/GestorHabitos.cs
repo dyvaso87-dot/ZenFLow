@@ -43,5 +43,10 @@ namespace ZenFlow.Logica
         }
 
         public List<Habito> ObtenerTodos() => _repo.ObtenerTodos();
+
+        public void EliminarHabito(int id)
+        {
+            _repo.Eliminar(id);
+        }
     }
 }

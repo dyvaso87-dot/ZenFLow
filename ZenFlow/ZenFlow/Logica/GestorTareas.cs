@@ -43,5 +43,9 @@ namespace ZenFlow.Logica
                 _repo.Guardar(tarea);
             }
         }
+        public void EliminarTarea(int id)
+        {
+            _repo.Eliminar(id);
+        }
     }
 }
