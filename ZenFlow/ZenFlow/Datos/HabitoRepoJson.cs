@@ -19,8 +19,21 @@ namespace ZenFlow.Datos
         public void Guardar(Habito habito)
         {
             var habitos = ObtenerTodos();
-            habito.Id = habitos.Count + 1;
-            habitos.Add(habito);
+
+            // Si ya existe (tiene Id), actualiza — si no, crea uno nuevo
+            var existente = habitos.FirstOrDefault(h => h.Id == habito.Id);
+            if (existente != null)
+            {
+                habitos.Remove(existente);
+                habitos.Add(habito);
+            }
+            else
+            {
+                // Genera un Id único basado en el máximo existente
+                habito.Id = habitos.Count > 0 ? habitos.Max(h => h.Id) + 1 : 1;
+                habitos.Add(habito);
+            }
+
             File.WriteAllText(_ruta, JsonSerializer.Serialize(habitos));
         }
 

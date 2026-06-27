@@ -32,13 +32,19 @@ namespace ZenFlow.Logica
             if (habito == null) return;
 
             var hoy = DateTime.Today;
+
+            // Si ya lo cumplió hoy, no hace nada
+            if (habito.UltimoCumplimiento.Date == hoy) return;
+
+            // Calcula la racha
             if (habito.UltimoCumplimiento.Date == hoy.AddDays(-1))
                 habito.RachaDias++;
-            else if (habito.UltimoCumplimiento.Date != hoy)
+            else
                 habito.RachaDias = 1;
 
             habito.UltimoCumplimiento = hoy;
-            _repo.Eliminar(id);
+
+            // Solo actualiza, no elimina ni vuelve a crear
             _repo.Guardar(habito);
         }
 

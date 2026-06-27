@@ -19,8 +19,19 @@ namespace ZenFlow.Datos
         public void Guardar(Tarea tarea)
         {
             var tareas = ObtenerTodas();
-            tarea.Id = tareas.Count + 1;
-            tareas.Add(tarea);
+
+            var existente = tareas.FirstOrDefault(t => t.Id == tarea.Id);
+            if (existente != null)
+            {
+                tareas.Remove(existente);
+                tareas.Add(tarea);
+            }
+            else
+            {
+                tarea.Id = tareas.Count > 0 ? tareas.Max(t => t.Id) + 1 : 1;
+                tareas.Add(tarea);
+            }
+
             File.WriteAllText(_ruta, JsonSerializer.Serialize(tareas));
         }
 
