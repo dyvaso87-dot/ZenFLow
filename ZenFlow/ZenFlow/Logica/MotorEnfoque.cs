@@ -7,7 +7,7 @@ namespace ZenFlow.Logica
     {
         private DispatcherTimer _timer;
         private int _segundosRestantes;
-        private List<string> _appsABloquear;
+        private List<string> _appsABloquear = new();
         public bool EnSesion { get; private set; }
 
         public event Action<int>? TiempoActualizado;
@@ -38,7 +38,6 @@ namespace ZenFlow.Logica
         {
             _timer.Stop();
             EnSesion = false;
-            DesbloquearApps();
         }
 
         private void OnTick(object? sender, EventArgs e)
@@ -56,20 +55,20 @@ namespace ZenFlow.Logica
 
         private void BloquearApps()
         {
-            foreach (var app in _appsABloquear)
+            foreach (var proceso in _appsABloquear)
             {
-                var procesos = Process.GetProcessesByName(app);
-                foreach (var proceso in procesos)
+                try
                 {
-                    try { proceso.CloseMainWindow(); }
-                    catch { }
+                    // Kill() en lugar de CloseMainWindow() — más efectivo
+                    var procesos = Process.GetProcessesByName(proceso);
+                    foreach (var p in procesos)
+                    {
+                        try { p.Kill(); }
+                        catch { }
+                    }
                 }
+                catch { }
             }
-        }
-
-        private void DesbloquearApps()
-        {
-            // Las apps se desbloquean solas al dejar de cerrarlas
         }
     }
 }

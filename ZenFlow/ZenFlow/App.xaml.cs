@@ -6,20 +6,37 @@ namespace ZenFlow
 {
     public partial class App : Application
     {
-        public static GestorTareas GestorTareas { get; private set; }
-        public static GestorHabitos GestorHabitos { get; private set; }
-        public static MotorEnfoque MotorEnfoque { get; private set; }
+        public static GestorTareas GestorTareas { get; private set; } = null!;
+        public static GestorHabitos GestorHabitos { get; private set; } = null!;
+        public static GestorApps GestorApps { get; private set; } = null!;
+        public static MotorEnfoque MotorEnfoque { get; private set; } = null!;
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
+            // Atrapa cualquier excepción no manejada
+            AppDomain.CurrentDomain.UnhandledException += (s, ex) =>
+            {
+                MessageBox.Show(ex.ExceptionObject.ToString(),
+                    "Error al iniciar", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            };
 
-            // Singleton aplicado — no usamos new, usamos .Instancia
-            GestorTareas = new GestorTareas(TareaRepoJson.Instancia);
-            GestorHabitos = new GestorHabitos(HabitoRepoJson.Instancia);
-            MotorEnfoque = new MotorEnfoque();
+            try
+            {
+                base.OnStartup(e);
 
-            new MainWindow().Show();
+                GestorTareas = new GestorTareas(TareaRepoJson.Instancia);
+                GestorHabitos = new GestorHabitos(HabitoRepoJson.Instancia);
+                GestorApps = new GestorApps(AppBloqueadaRepoJson.Instancia);
+                MotorEnfoque = new MotorEnfoque();
+
+                new MainWindow().Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error al iniciar",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
