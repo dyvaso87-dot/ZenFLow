@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="../ZenFlow.API/ZenFlow.API.csproj" Id="1c1a9e03-b452-4763-ada9-84eb0a6266d1" />
   <Project Path="ZenFlow/ZenFlow.csproj" />
 </Solution>
