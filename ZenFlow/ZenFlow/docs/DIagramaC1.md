@@ -1,4 +1,5 @@
-﻿classDiagram
+```mermaid
+ classDiagram
     direction LR
 
     class Estudiante {
@@ -26,3 +27,4 @@
     Estudiante --> ZenFlow : usa
     ZenFlow --> WindowsOS : bloquea procesos
     ZenFlow --> ArchivosLocales : lee y escribe
+```
