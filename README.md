@@ -18,7 +18,10 @@ EnumWindows o manejar procesos con System.Diagnostics.Process. Eso es C# puro, s
 La segunda razón es más honesta: WPF es lo que puedo aprender durante este semestre sin sacrificar la calidad de la arquitectura. Prefiero hacer algo bien con tecnología que conozco a hacer algo a medias con algo nuevo.
 Alternativas consideradas
 
-# Diagramas de codigo
-* [DiagramaC1](ZenFlow/ZenFlow/docs/DiagramaC1.md)
-* [DiagramaC2](ZenFlow/ZenFlow/docs/DiagramaC2.md)
-* [DiagramaC3](ZenFlow/ZenFlow/docs/DiagramaC3.md)
+## Diagramas de Arquitectura C4
+
+Consulta el diagrama de contexto aquí: [Diagrama C1 — System Context](ZenFlow/ZenFlow/docs/DIagramaC1.md)
+
+Consulta el diagrama de contenedores aquí: [Diagrama C2 — Containers](ZenFlow/ZenFlow/docs/DiagramaC2.md)
+
+Consulta el diagrama de componentes aquí: [Diagrama C3 — Components](ZenFlow/ZenFlow/docs/DlagramaC3.md)
