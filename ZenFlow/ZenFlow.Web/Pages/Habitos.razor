@@ -1,0 +1,123 @@
+﻿@page "/habitos"
+@using ZenFlow.Web.Models
+@inject ZenFlow.Web.Services.LocalStorageService Storage
+
+<PageTitle>Hábitos - ZenFlow</PageTitle>
+
+<div class="page-header">
+    <h1>Hábitos</h1>
+    <p>Crea hábitos y registra tu progreso diario.</p>
+</div>
+
+<div class="card">
+    <div class="form-row">
+        <input @bind="nuevoNombre"
+               placeholder="Ejemplo: Leer 20 minutos" />
+
+        <button @onclick="AgregarHabito">
+            Agregar hábito
+        </button>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(mensaje))
+    {
+        <p class="message">@mensaje</p>
+    }
+</div>
+
+<div class="items-grid">
+    @foreach (var habito in habitos)
+    {
+        <article class="item-card">
+            <h3>@habito.Nombre</h3>
+
+            <p>
+                Racha:
+                <strong>@habito.RachaDias días</strong>
+            </p>
+
+            <button @onclick="() => AlternarCumplimiento(habito)">
+                @(habito.CumplidoHoy
+                    ? "Desmarcar"
+                    : "Cumplido hoy")
+            </button>
+
+            <button class="danger"
+                    @onclick="() => EliminarHabito(habito.Id)">
+                Eliminar
+            </button>
+        </article>
+    }
+</div>
+
+@code {
+    private const string Clave = "zenflow-habitos";
+
+    private List<Habito> habitos = [];
+    private string nuevoNombre = string.Empty;
+    private string mensaje = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        habitos =
+            await Storage.ObtenerAsync<List<Habito>>(Clave)
+            ?? [];
+
+        StateHasChanged();
+    }
+
+    private async Task AgregarHabito()
+    {
+        mensaje = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(nuevoNombre))
+        {
+            mensaje = "Escribe el nombre del hábito.";
+            return;
+        }
+
+        habitos.Add(new Habito
+        {
+            Id = habitos.Count == 0
+                ? 1
+                : habitos.Max(h => h.Id) + 1,
+
+            Nombre = nuevoNombre.Trim()
+        });
+
+        nuevoNombre = string.Empty;
+
+        await Guardar();
+    }
+
+    private async Task AlternarCumplimiento(Habito habito)
+    {
+        habito.CumplidoHoy = !habito.CumplidoHoy;
+
+        habito.RachaDias += habito.CumplidoHoy ? 1 : -1;
+
+        if (habito.RachaDias < 0)
+        {
+            habito.RachaDias = 0;
+        }
+
+        await Guardar();
+    }
+
+    private async Task EliminarHabito(int id)
+    {
+        habitos.RemoveAll(h => h.Id == id);
+
+        await Guardar();
+    }
+
+    private Task Guardar()
+    {
+        return Storage.GuardarAsync(Clave, habitos);
+    }
+}

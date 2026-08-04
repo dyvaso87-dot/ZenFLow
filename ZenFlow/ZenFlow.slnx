@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="ZenFlow.Tests/ZenFlow.Tests.csproj" Id="8da20d58-ac5d-4cac-a466-c0f6ef4ad632" />
+  <Project Path="ZenFlow.Web/ZenFlow.Web.csproj" />
   <Project Path="ZenFlow/ZenFlow.csproj" />
 </Solution>

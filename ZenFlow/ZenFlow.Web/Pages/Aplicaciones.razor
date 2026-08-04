@@ -1,0 +1,187 @@
+﻿@page "/aplicaciones"
+@using ZenFlow.Web.Models
+@inject ZenFlow.Web.Services.LocalStorageService Storage
+
+<PageTitle>Aplicaciones - ZenFlow</PageTitle>
+
+<section class="page-header">
+    <span class="section-label">Control de distracciones</span>
+    <h1>Aplicaciones bloqueadas</h1>
+    <p>
+        Crea una lista de aplicaciones que deseas evitar
+        durante tus sesiones de concentración.
+    </p>
+</section>
+
+<section class="content-layout">
+    <article class="form-card">
+        <h2>Agregar aplicación</h2>
+
+        <label for="nombreApp">Nombre visible</label>
+
+        <input id="nombreApp"
+               @bind="nuevoNombre"
+               placeholder="Ejemplo: Spotify" />
+
+        <label for="procesoApp">Nombre del proceso</label>
+
+        <input id="procesoApp"
+               @bind="nuevoProceso"
+               placeholder="Ejemplo: Spotify.exe" />
+
+        <button class="primary-button"
+                @onclick="AgregarAplicacion">
+            + Agregar aplicación
+        </button>
+
+        @if (!string.IsNullOrWhiteSpace(mensaje))
+        {
+            <p class="validation-message">@mensaje</p>
+        }
+
+        <p class="demo-note">
+            En la versión web esta función administra una lista
+            demostrativa. Un navegador no puede cerrar programas
+            instalados en el dispositivo.
+        </p>
+    </article>
+
+    <section class="list-section">
+        <div class="section-toolbar">
+            <div>
+                <h2>Lista configurada</h2>
+                <p>@aplicaciones.Count aplicaciones registradas</p>
+            </div>
+
+            @if (aplicaciones.Count > 0)
+            {
+                <button class="danger-outline-button"
+                        @onclick="EliminarTodas">
+                    Limpiar lista
+                </button>
+            }
+        </div>
+
+        @if (aplicaciones.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-icon">◉</div>
+                <h3>No hay aplicaciones agregadas</h3>
+                <p>Agrega una aplicación desde el formulario.</p>
+            </div>
+        }
+        else
+        {
+            <div class="items-grid">
+                @foreach (var app in aplicaciones)
+                {
+                    <article class="item-card">
+                        <div class="item-card-header">
+                            <div>
+                                <span class="item-type">Aplicación</span>
+                                <h3>@app.Nombre</h3>
+                            </div>
+
+                            <span class="status-badge @(app.Activa ? "enabled" : "disabled")">
+                                @(app.Activa ? "Activa" : "Inactiva")
+                            </span>
+                        </div>
+
+                        <p class="process-name">@app.Proceso</p>
+
+                        <div class="item-actions">
+                            <button class="secondary-button"
+                                    @onclick="() => Alternar(app)">
+                                @(app.Activa
+                                    ? "Desactivar"
+                                    : "Activar")
+                            </button>
+
+                            <button class="danger-button"
+                                    @onclick="() => Eliminar(app.Id)">
+                                Eliminar
+                            </button>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+</section>
+
+@code {
+    private const string Clave = "zenflow-aplicaciones";
+
+    private List<AppBloqueada> aplicaciones = [];
+
+    private string nuevoNombre = string.Empty;
+    private string nuevoProceso = string.Empty;
+    private string mensaje = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        aplicaciones =
+            await Storage.ObtenerAsync<List<AppBloqueada>>(Clave)
+            ?? [];
+
+        StateHasChanged();
+    }
+
+    private async Task AgregarAplicacion()
+    {
+        mensaje = string.Empty;
+
+        if (
+            string.IsNullOrWhiteSpace(nuevoNombre) ||
+            string.IsNullOrWhiteSpace(nuevoProceso)
+        )
+        {
+            mensaje = "El nombre y el proceso son obligatorios.";
+            return;
+        }
+
+        aplicaciones.Add(new AppBloqueada
+        {
+            Id = aplicaciones.Count == 0
+                ? 1
+                : aplicaciones.Max(a => a.Id) + 1,
+
+            Nombre = nuevoNombre.Trim(),
+            Proceso = nuevoProceso.Trim(),
+            Activa = true
+        });
+
+        nuevoNombre = string.Empty;
+        nuevoProceso = string.Empty;
+
+        await Guardar();
+    }
+
+    private async Task Alternar(AppBloqueada app)
+    {
+        app.Activa = !app.Activa;
+        await Guardar();
+    }
+
+    private async Task Eliminar(int id)
+    {
+        aplicaciones.RemoveAll(a => a.Id == id);
+        await Guardar();
+    }
+
+    private async Task EliminarTodas()
+    {
+        aplicaciones.Clear();
+        await Guardar();
+    }
+
+    private Task Guardar()
+    {
+        return Storage.GuardarAsync(Clave, aplicaciones);
+    }
+}

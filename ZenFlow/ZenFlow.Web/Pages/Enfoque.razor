@@ -1,0 +1,195 @@
+﻿@page "/enfoque"
+@implements IDisposable
+
+<PageTitle>Modo Enfoque - ZenFlow</PageTitle>
+
+<section class="page-header">
+    <span class="section-label">Productividad</span>
+    <h1>Modo Enfoque</h1>
+    <p>
+        Elige una duración, inicia la sesión y concéntrate
+        en una sola actividad.
+    </p>
+</section>
+
+<section class="focus-layout">
+    <article class="focus-card">
+        <div class="focus-status">
+            <span class="status-dot @(activo ? "active" : "")"></span>
+            @(activo ? "Sesión activa" : "Listo para comenzar")
+        </div>
+
+        <div class="timer-circle">
+            <div class="timer-value">@TiempoFormateado</div>
+            <div class="timer-caption">
+                @(segundosRestantes == 0
+                    ? "Sesión completada"
+                    : activo
+                        ? "Enfócate"
+                        : "Tiempo restante")
+            </div>
+        </div>
+
+        <div class="duration-selector">
+            <button class="duration-button"
+                    disabled="@activo"
+                    @onclick="() => CambiarDuracion(5)">
+                5 min
+            </button>
+
+            <button class="duration-button"
+                    disabled="@activo"
+                    @onclick="() => CambiarDuracion(15)">
+                15 min
+            </button>
+
+            <button class="duration-button"
+                    disabled="@activo"
+                    @onclick="() => CambiarDuracion(25)">
+                25 min
+            </button>
+
+            <button class="duration-button"
+                    disabled="@activo"
+                    @onclick="() => CambiarDuracion(50)">
+                50 min
+            </button>
+        </div>
+
+        <div class="timer-actions">
+            <button class="primary-button"
+                    disabled="@activo"
+                    @onclick="Iniciar">
+                ▶ Iniciar
+            </button>
+
+            <button class="secondary-button"
+                    disabled="@(!activo)"
+                    @onclick="Pausar">
+                ⏸ Pausar
+            </button>
+
+            <button class="danger-button"
+                    @onclick="Reiniciar">
+                ↻ Reiniciar
+            </button>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(mensaje))
+        {
+            <p class="success-message">@mensaje</p>
+        }
+    </article>
+
+    <aside class="focus-tips">
+        <h2>Consejos para concentrarte</h2>
+
+        <div class="tip-item">
+            <span>01</span>
+            <p>Elige una sola tarea antes de iniciar.</p>
+        </div>
+
+        <div class="tip-item">
+            <span>02</span>
+            <p>Silencia notificaciones y evita distracciones.</p>
+        </div>
+
+        <div class="tip-item">
+            <span>03</span>
+            <p>Descansa unos minutos al terminar la sesión.</p>
+        </div>
+    </aside>
+</section>
+
+@code {
+    private const int DuracionPredeterminada = 25;
+
+    private int minutosSeleccionados = DuracionPredeterminada;
+    private int segundosRestantes = DuracionPredeterminada * 60;
+
+    private bool activo;
+    private string mensaje = string.Empty;
+
+    private PeriodicTimer? temporizador;
+    private CancellationTokenSource? cancelacion;
+
+    private string TiempoFormateado =>
+        $"{segundosRestantes / 60:00}:{segundosRestantes % 60:00}";
+
+    private void CambiarDuracion(int minutos)
+    {
+        if (activo)
+        {
+            return;
+        }
+
+        minutosSeleccionados = minutos;
+        segundosRestantes = minutos * 60;
+        mensaje = string.Empty;
+    }
+
+    private async Task Iniciar()
+    {
+        if (activo || segundosRestantes <= 0)
+        {
+            return;
+        }
+
+        activo = true;
+        mensaje = string.Empty;
+
+        cancelacion?.Dispose();
+        temporizador?.Dispose();
+
+        cancelacion = new CancellationTokenSource();
+        temporizador = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+        try
+        {
+            while (
+                segundosRestantes > 0 &&
+                await temporizador.WaitForNextTickAsync(cancelacion.Token)
+            )
+            {
+                segundosRestantes--;
+                await InvokeAsync(StateHasChanged);
+            }
+
+            if (segundosRestantes == 0)
+            {
+                mensaje = "¡Sesión completada! Es momento de descansar.";
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // La sesión fue pausada o reiniciada.
+        }
+        finally
+        {
+            activo = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void Pausar()
+    {
+        cancelacion?.Cancel();
+        activo = false;
+    }
+
+    private void Reiniciar()
+    {
+        cancelacion?.Cancel();
+
+        activo = false;
+        segundosRestantes = minutosSeleccionados * 60;
+        mensaje = string.Empty;
+    }
+
+    public void Dispose()
+    {
+        cancelacion?.Cancel();
+        cancelacion?.Dispose();
+        temporizador?.Dispose();
+    }
+}

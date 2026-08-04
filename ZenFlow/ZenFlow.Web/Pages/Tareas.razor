@@ -1,0 +1,121 @@
+﻿@page "/tareas"
+@using ZenFlow.Web.Models
+@inject ZenFlow.Web.Services.LocalStorageService Storage
+
+<PageTitle>Tareas - ZenFlow</PageTitle>
+
+<div class="page-header">
+    <h1>Tareas</h1>
+    <p>Organiza y completa tus pendientes.</p>
+</div>
+
+<div class="card">
+    <div class="form-column">
+        <input @bind="nuevoTitulo"
+               placeholder="Nombre de la tarea" />
+
+        <input type="date"
+               @bind="nuevaFecha" />
+
+        <button @onclick="AgregarTarea">
+            Agregar tarea
+        </button>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(mensaje))
+    {
+        <p class="message">@mensaje</p>
+    }
+</div>
+
+<div class="items-grid">
+    @foreach (var tarea in tareas.OrderBy(t => t.Completada))
+    {
+        <article class="item-card @(tarea.Completada ? "completed" : "")">
+            <h3>@tarea.Titulo</h3>
+
+            <p>
+                Fecha límite:
+                @tarea.FechaLimite.ToString("dd/MM/yyyy")
+            </p>
+
+            <button @onclick="() => AlternarTarea(tarea)">
+                @(tarea.Completada
+                    ? "Marcar pendiente"
+                    : "Completar")
+            </button>
+
+            <button class="danger"
+                    @onclick="() => EliminarTarea(tarea.Id)">
+                Eliminar
+            </button>
+        </article>
+    }
+</div>
+
+@code {
+    private const string Clave = "zenflow-tareas";
+
+    private List<TareaItem> tareas = [];
+    private string nuevoTitulo = string.Empty;
+    private DateTime nuevaFecha = DateTime.Today;
+    private string mensaje = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        tareas =
+            await Storage.ObtenerAsync<List<TareaItem>>(Clave)
+            ?? [];
+
+        StateHasChanged();
+    }
+
+    private async Task AgregarTarea()
+    {
+        mensaje = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(nuevoTitulo))
+        {
+            mensaje = "Escribe el nombre de la tarea.";
+            return;
+        }
+
+        tareas.Add(new TareaItem
+        {
+            Id = tareas.Count == 0
+                ? 1
+                : tareas.Max(t => t.Id) + 1,
+
+            Titulo = nuevoTitulo.Trim(),
+            FechaLimite = nuevaFecha,
+            Completada = false
+        });
+
+        nuevoTitulo = string.Empty;
+        nuevaFecha = DateTime.Today;
+
+        await Guardar();
+    }
+
+    private async Task AlternarTarea(TareaItem tarea)
+    {
+        tarea.Completada = !tarea.Completada;
+        await Guardar();
+    }
+
+    private async Task EliminarTarea(int id)
+    {
+        tareas.RemoveAll(t => t.Id == id);
+        await Guardar();
+    }
+
+    private Task Guardar()
+    {
+        return Storage.GuardarAsync(Clave, tareas);
+    }
+}
